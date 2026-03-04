@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Portfolio {
+  id        String   @id @default(cuid())
+  name      String
+  broker    String?
+  currency  String   @default("USD")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  trades    Trade[]
+
+  @@map("portfolios")
+}
+
+model Trade {
+  id          String      @id @default(cuid())
+  portfolioId String      @map("portfolio_id")
+  portfolio   Portfolio   @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  pair        String
+  direction   Direction
+  lotSize     Float       @map("lot_size")
+  entryPrice  Float       @map("entry_price")
+  exitPrice   Float?      @map("exit_price")
+  stopLoss    Float?      @map("stop_loss")
+  takeProfit  Float?      @map("take_profit")
+  profitLoss  Float?      @map("profit_loss")
+  status      TradeStatus @default(OPEN)
+  openedAt    DateTime    @default(now()) @map("opened_at")
+  closedAt    DateTime?   @map("closed_at")
+  notes       String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  @@map("trades")
+}
+
+enum Direction {
+  BUY
+  SELL
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}

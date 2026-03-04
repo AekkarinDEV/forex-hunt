@@ -92,7 +92,7 @@ export default function MonthlyRecordPage() {
   };
 
   const dateCellRender = (value: Dayjs) => {
-    if (!data) return null;
+    if (!data || !data.dailyMap) return null;
     const dateStr = value.format("YYYY-MM-DD");
     const dayData = data.dailyMap[dateStr];
     if (!dayData) return null;
@@ -267,7 +267,7 @@ export default function MonthlyRecordPage() {
                   precision={stat.precision}
                   prefix={stat.prefix}
                   suffix={stat.suffix}
-                  valueStyle={{ color: stat.color, fontWeight: 700 }}
+                  styles={{ content: { color: stat.color, fontWeight: 700 } }}
                 />
               </Card>
             </Col>

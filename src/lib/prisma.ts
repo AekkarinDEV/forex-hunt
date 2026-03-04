@@ -1,12 +1,22 @@
 import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
+
+// Accept self-signed certificates (needed for Aiven, Neon, etc.)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient() {
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+  const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL!,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 

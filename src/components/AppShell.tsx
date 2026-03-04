@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Button } from "antd";
 import {
   DashboardOutlined,
   FolderOutlined,
   CalendarOutlined,
   LineChartOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -38,6 +39,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const selectedKey =
     menuItems.find((item) => item.key !== "/" && pathname.startsWith(item.key))
       ?.key || (pathname === "/" ? "/" : "/");
+
+  // Skip shell for login page
+  if (pathname === "/login") {
+    return <>{children}</>;
+  }
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -86,6 +92,28 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           onClick={({ key }) => router.push(key)}
           style={{ borderRight: 0, marginTop: 8 }}
         />
+        <div
+          style={{
+            position: "absolute",
+            bottom: 48,
+            left: 0,
+            right: 0,
+            padding: "0 16px",
+          }}
+        >
+          <Button
+            type="text"
+            icon={<LogoutOutlined />}
+            block
+            onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
+              window.location.href = "/login";
+            }}
+            style={{ color: "#6b7280", justifyContent: "flex-start" }}
+          >
+            {!collapsed && "Logout"}
+          </Button>
+        </div>
       </Sider>
       <Layout
         style={{

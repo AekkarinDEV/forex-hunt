@@ -156,7 +156,7 @@ export default function DashboardPage() {
                 precision={stat.precision}
                 prefix={stat.prefix}
                 suffix={stat.suffix}
-                valueStyle={{ color: stat.color, fontWeight: 700 }}
+                styles={{ content: { color: stat.color, fontWeight: 700 } }}
               />
             </Card>
           </Col>
